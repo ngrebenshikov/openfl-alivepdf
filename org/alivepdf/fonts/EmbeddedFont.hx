@@ -29,6 +29,7 @@ class EmbeddedFont extends CoreFont implements IFont
     public var originalSize(get, never) : Int;
     public var description(get, never) : FontDescription;
     public var differences(get, set) : String;
+    public var differencesIndex: Int = 0;
     public var stream(get, never) : ByteArray;
 
     private var _differences : String;

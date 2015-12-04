@@ -2708,7 +2708,7 @@ class PDF implements IEventDispatcher
                     differences[d] = addedFont.differences;
                 }
                 
-                fonts[fonts.length - 1].differences = d;
+               addedFont.differencesIndex = d;
             }
         }
         return font;
@@ -5500,8 +5500,8 @@ class PDF implements IEventDispatcher
                 write("/FontDescriptor " + (n + 2) + " 0 R");
                 if (embeddedFont.encoding != null) 
                 {
-                    if (embeddedFont.differences != null) 
-                        write("/Encoding " + (nf + 1) + " 0 R")
+                    if (embeddedFont.differences != null)
+                        write("/Encoding " + (nf + embeddedFont.differencesIndex + 1) + " 0 R")
                     else write("/Encoding /WinAnsiEncoding");
                 }
                 write(">>");
