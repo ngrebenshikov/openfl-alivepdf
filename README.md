@@ -11,7 +11,7 @@ It's converted from AS3 to Haxe using [as3hx](https://github.com/HaxeFoundation/
 
 ## Features (Roadmap)
 
-Features are public methods of the org.alive.PDF class.
+Features are public methods of the org.alivepdf.PDF class.
 
 ✓ means a feature's checked, fixed and works OK.
 
