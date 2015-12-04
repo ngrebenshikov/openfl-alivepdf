@@ -1,5 +1,6 @@
 package ;
 
+import sys.io.File;
 import flash.display.Graphics;
 import flash.display.Shape;
 import org.alivepdf.images.ColorSpace;
@@ -56,16 +57,16 @@ class Main extends Sprite {
 
         pdf.addImageStream(getByteArrayFromResource("assets/memory.png"), ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.CENTERED), 200, 150, 50, 50);
 
-
+        #if html5
         var base64: String = pdf.save(Method.BASE_64);
-
         flash.Lib.getURL(new URLRequest("data:application/pdf;base64," + StringTools.urlEncode(base64)));
-
-        trace(base64.length);
-
-//        var ba = ByteArray.fromBytes(Bytes.ofString("Hello world!"));
-//        var compressed = ba.compressEx(CompressionAlgorithm.DEFLATE);
-//        trace(compressed);
+        #else
+        var output = File.write("/tmp/generated.pdf", true);
+        var ba: ByteArray = cast pdf.save(Method.LOCAL);
+        output.write(ba.toBytes());
+        output.close();
+        #end
+        Sys.exit(0);
     }
 
     private function getByteArrayFromResource(resourceName: String): ByteArray {

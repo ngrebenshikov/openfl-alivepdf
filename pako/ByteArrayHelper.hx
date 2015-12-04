@@ -1,10 +1,18 @@
 package pako;
 
+import haxe.io.Bytes;
 import haxe.io.UInt8Array;
 import flash.utils.CompressionAlgorithm;
 import flash.utils.ByteArray;
 
 class ByteArrayHelper {
+    public static function toBytes(ba: ByteArray): Bytes {
+        var bytes = Bytes.alloc(ba.length);
+        for (i in 0...ba.length) {
+            bytes.set(i, ba.__get(i));
+        }
+        return bytes;
+    }
     public static function compressEx(ba: ByteArray, ?algorithm : CompressionAlgorithm): ByteArray {
         if (null == algorithm) {
             algorithm = CompressionAlgorithm.ZLIB;
