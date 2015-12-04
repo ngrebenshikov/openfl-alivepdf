@@ -1,7 +1,9 @@
 # openfl-alivepdf
-The PDF generation library ported from AlivePDF AS3 projects (ported the FPDF PHP project)
+The PDF generation library ported from the [AlivePDF](http://alivepdf.bytearray.org) AS3 project (ported the [FPDF](http://www.fpdf.org) PHP project)
 
-It's converted from AS3 to Haxe using as3hx. So there are a lot of issues now. If you'd like to use such library your contribution to check and fix features is completely appreciated.
+[AlivePDF API](http://alivepdf.bytearray.org/alivepdf-asdoc/)
+
+It's converted from AS3 to Haxe using [as3hx](https://github.com/HaxeFoundation/as3hx). So there are a lot of issues now. If you'd like to use such library your contribution to check and fix features is completely appreciated.
 
 ## Features (Roadmap)
 
