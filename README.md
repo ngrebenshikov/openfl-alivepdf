@@ -3,6 +3,10 @@ The PDF generation library ported from the [AlivePDF](http://alivepdf.bytearray.
 
 [AlivePDF API](http://alivepdf.bytearray.org/alivepdf-asdoc/)
 
+## Getting started
+- Install haxlib git openfl-alivepdf https://github.com/ngrebenshikov/openfl-alivepdf
+- Take a look at the example
+
 It's converted from AS3 to Haxe using [as3hx](https://github.com/HaxeFoundation/as3hx). So there are a lot of issues now. If you'd like to use such library your contribution to check and fix features is completely appreciated.
 
 ## Features (Roadmap)
