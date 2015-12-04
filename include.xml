@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension>
+    <haxedef name="alivepdf" />
+    <assets path="org/alivepdf/fonts/map" include="*.map" type="binary" />
+    <dependency path="dependencies/pako.min.js" if="html5"/>
+    <template path="templates"/>
+</extension>

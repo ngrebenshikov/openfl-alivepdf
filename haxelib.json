@@ -1,0 +1,10 @@
+{
+	"name": "openfl-alivepdf",
+	"url": "https://github.com/ngrebenshikov/openfl-alivepdf",
+	"license": "MIT",
+	"tags": ["pdf"],
+	"description": "The PDF generation library ported from the AlivePDF AS3 project",
+	"version": "0.1",
+	"releasenote": "Initial release",
+	"contributors": [ "ngrebenshikov" ]
+}

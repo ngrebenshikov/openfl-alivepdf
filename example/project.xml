@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+    <meta title="AlivePdf Example" package="org.alivepdf.example" version="0.1" company="" />
+
+    <!-- output -->
+    <app main="Main" file="test" path="bin" />
+
+    <window width="0" height="0" background="0xFFFFFF" antialiasing="4" fps="60"/>
+    <source path="src" />
+
+    <haxelib name="openfl" />
+    <haxelib name="openfl-alivepdf"/>
+
+    <assets path="assets" include="*.ttf|*.afm" type="binary" />
+    <assets path="assets" include="*.jpeg|*.jpg|*.png" type="binary" />
+</project>
