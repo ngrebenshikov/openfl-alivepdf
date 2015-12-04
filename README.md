@@ -34,7 +34,7 @@ setKeywords |  |
 setCreator |  |
 setAliasNbPages |  |
 rotatePage |  |
-addPage | ✓ |
+addPage | ✓ | ✓
 getPage |  |
 getPages |  |
 gotoPage |  |
@@ -56,22 +56,22 @@ rotate |  |
 header |  |
 footer |  |
 setAlpha |  |
-moveTo | ✓ |
-lineTo | ✓ |
-end | ✓ |
+moveTo | ✓ | ✓
+lineTo | ✓ | ✓
+end | ✓ | ✓
 drawLine |  |
 curveTo |  |
-lineStyle | ✓ |
+lineStyle | ✓ | ✓
 setStrokeColor |  |
 setTextColor |  |
-beginFill | ✓ |
+beginFill | ✓ | ✓
 beginBitmapFill |  |
-endFill | ✓ |
-drawRect | ✓ |
+endFill | ✓ | ✓
+drawRect | ✓ | ✓
 drawRoundRect |  |
 drawRoundRectComplex |  |
 drawEllipse |  |
-drawCircle | ✓ |
+drawCircle | ✓ | ✓
 drawPolygone |  |
 drawSector |  |
 linearGradient |  |
@@ -94,14 +94,14 @@ getCurrentInternalLink |  |
 addTransition |  |
 setViewerPreferences |  |
 setStartingPage |  |
-setFont (TTF) | ✓ |
+setFont (TTF) | ✓ | ✓
 setFont (Type1) |  |
 setFont (System) |  |
-setFontSize | ✓ |
+setFontSize | ✓ | ✓
 removeFont |  |
 totalFonts |  |
 getFonts |  |
-addText | ✓ |
+addText | ✓ | ✓
 textStyle |  |
 addCell |  |
 addCellFitScale |  |
@@ -113,14 +113,14 @@ writeText |  |
 writeFlashHtmlText |  |
 addGrid |  |
 setGridPositionOnNextPages |  |
-save (LOCAL) | ✓ |
+save (LOCAL) | ✓ | ✓
 save (BASE64) | ✓ |
 save (REMOTE) |  |
 addJavaScript |  |
 addEPSImage |  |
-addImageStream (PNG) | ✓ |
+addImageStream (PNG) | ✓ | ✓
 addImageStream (JPEG) |  |
 addImageStream (GIF) |  |
-addImage (PNG) | ✓ |
+addImage (PNG) | ✓ | ✓
 addImage (JPEG) |  |
 addImage (TIFF) |  |
