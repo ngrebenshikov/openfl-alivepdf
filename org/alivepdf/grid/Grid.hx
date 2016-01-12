@@ -13,8 +13,8 @@ import org.alivepdf.serializer.ISerializer;
 
 class Grid
 {
-    public var columns(get, set) : Array<Dynamic>;
-    public var cells(get, never) : Array<Dynamic>;
+    public var columns(get, set) : Array<GridColumn>;
+    public var cells(get, never) : Array<Array<GridCell>>;
     public var width(get, never) : Float;
     public var height(get, never) : Float;
     public var rowHeight(get, never) : Int;
@@ -37,8 +37,8 @@ class Grid
     private var _rowHeight : Int = 0;
     private var _x : Int = 0;
     private var _y : Int = 0;
-    private var _columns : Array<Dynamic>;
-    private var _cells : Array<Dynamic>;  // array of array of GridCell  
+    private var _columns : Array<GridColumn>;
+    private var _cells : Array<Array<GridCell>>;
     private var _borderColor : IColor;
     private var _borderAlpha : Float;
     private var _joints : String;
@@ -53,7 +53,7 @@ class Grid
             useAlternativeRowColor : Bool = false, alternativeCellColor : IColor = null,
             borderColor : IColor = null, borderAlpha : Float = 1,
             headerHeight : Int = 5, rowHeight : Int = 5,
-            joints : String = "0 j", columns : Array<Dynamic> = null)
+            joints : String = "0 j", columns : Array<GridColumn> = null)
     {
         _data = data;
         _width = width;
@@ -92,9 +92,10 @@ class Grid
             fields.sort(function(x, y) {
                 return if (x < y) -1 else if (x > y) 1 else 0;
             });
-            columns = new Array<Dynamic>();
+            columns = new Array<GridColumn>();
             var fieldsLng : Int = fields.length;
-            for (i in 0...fieldsLng){columns.push(new GridColumn(fields[i], fields[i], Std.int(this.width / fieldsLng), headerAlign, cellAlign));
+            for (i in 0...fieldsLng){
+                columns.push(new GridColumn(fields[i], fields[i], Std.int(this.width / fieldsLng), headerAlign, cellAlign));
             }
         }
     }
@@ -104,16 +105,16 @@ class Grid
         var buffer : Array<Dynamic> = dataProvider;
         var lng : Int = buffer.length;
         var lngColumns : Int = columns.length;
-        var row : Array<Dynamic>;
+        var row : Array<GridCell>;
         var item : Dynamic;
         var isEven : Int = 0;
-        var result : Array<Dynamic> = new Array<Dynamic>();
+        var result : Array<Array<GridCell>> = new Array<Array<GridCell>>();
         
         for (i in 0...lng){
             item = buffer[i];
-            row = new Array<Dynamic>();
+            row = new Array<GridCell>();
             for (j in 0...lngColumns){
-                var cell : GridCell = new GridCell(item[columns[j].dataField]);
+                var cell : GridCell = new GridCell(Reflect.field(item, columns[j].dataField));
                 cell.backgroundColor = ((useAlternativeRowColor && cast(isEven = i & 1, Bool))) ? alternativeCellColor : cellColor;
                 row.push(cell);
             }
@@ -124,18 +125,18 @@ class Grid
     }
     
     
-    private function get_columns() : Array<Dynamic>
+    private function get_columns() : Array<GridColumn>
     {
         return _columns;
     }
     
-    private function set_columns(columns : Array<Dynamic>) : Array<Dynamic>
+    private function set_columns(columns : Array<GridColumn>) : Array<GridColumn>
     {
         _columns = columns;
         return columns;
     }
     
-    private function get_cells() : Array<Dynamic>
+    private function get_cells() : Array<Array<GridCell>>
     {
         return _cells;
     }

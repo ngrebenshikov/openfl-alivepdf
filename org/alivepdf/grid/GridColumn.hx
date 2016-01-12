@@ -1,5 +1,6 @@
 package org.alivepdf.grid;
 
+import org.alivepdf.fonts.IFont;
 
 @:final class GridColumn
 {
@@ -9,6 +10,10 @@ package org.alivepdf.grid;
     public var cellAlign(get, never) : String;
     public var headerAlign(get, never) : String;
 
+    public var cellRenderer: String -> Float -> Float -> Float -> Float -> Void; // x, y, width, height
+    public var cellFont: IFont;
+    public var cellFontSize: Int;
+
     private var _headerText : String;
     private var _dataField : String;
     private var _width : Int = 0;
@@ -16,13 +21,16 @@ package org.alivepdf.grid;
     private var _cellAlign : String;
     private var _headerAlign : String;
     
-    public function new(headerText : String, dataField : String, width : Int = 30, headerAlign : String = "L", cellAlign : String = "L")
-    {
+    public function new(headerText : String, dataField : String, width : Int = 30, headerAlign : String = "L", cellAlign : String = "L",
+                        cellRenderer: String -> Float -> Float -> Float -> Float -> Void = null, cellFont: IFont = null, cellFontSize: Int = 0) {
         _headerText = headerText;
         _dataField = dataField;
         _width = width;
         _headerAlign = headerAlign;
         _cellAlign = cellAlign;
+        this.cellRenderer = cellRenderer;
+        this.cellFont = cellFont;
+        this.cellFontSize = cellFontSize;
     }
     
     private function get_headerText() : String

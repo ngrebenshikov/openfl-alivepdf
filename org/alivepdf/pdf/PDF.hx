@@ -26,6 +26,7 @@ _  ___ |  / _  / __ |/ //  __/  ____/_  /_/ /_  __/
 
 package org.alivepdf.pdf;
 
+import org.alivepdf.grid.GridColumn;
 import org.alivepdf.images.IImage;
 import haxe.io.Bytes;
 import Xml;
@@ -347,7 +348,7 @@ class PDF implements IEventDispatcher
     private var filter : String;
     private var filled : Bool;
     private var dispatcher : EventDispatcher;
-    private var arrayPages : Array<Dynamic>;
+    private var arrayPages : Array<Page>;
     private var arrayNotes : Array<Dynamic>;
     private var graphicStates : Array<Dynamic>;
     private var currentPage : Page;
@@ -356,12 +357,12 @@ class PDF implements IEventDispatcher
     private var textRendering : Int = 0;
     private var viewerPreferences : String;
     private var reference : String;
-    private var pagesReferences : Array<Dynamic>;
+    private var pagesReferences : Array<String>;
     private var nameDictionary : String;
     private var displayObjectbounds : Rectangle;
     private var coreFontMetrics : FontMetrics;
-    private var columnNames : Array<Dynamic>;
-    private var columns : Array<Dynamic>;
+    private var columnNames : Array<GridCell>;
+    private var columns : Array<GridColumn>;
     private var currentGrid : Grid;
     private var isEven : Int = 0;
     private var matrix : Matrix;
@@ -788,7 +789,7 @@ class PDF implements IEventDispatcher
     public function rotatePage(number : Int, rotation : Float) : Void
     {
         if (number > 0 && number <= arrayPages.length)
-            arrayPages[number - 1].rotate(rotation)
+            arrayPages[number - 1].rotate(Std.int(rotation))
         else throw new RangeError("No page available, please select a page from 1 to " + arrayPages.length);
     }
     
@@ -983,8 +984,8 @@ class PDF implements IEventDispatcher
 		 */
     public function removeAllPages() : Void
     {
-        arrayPages = new Array<Dynamic>();
-        pagesReferences = new Array<Dynamic>();
+        arrayPages = new Array<Page>();
+        pagesReferences = new Array<String>();
     }
     
     /**
@@ -2946,7 +2947,8 @@ class PDF implements IEventDispatcher
 		 * </pre>
 		 * </div>
 		 */
-    public function addCell(width : Float = 0, height : Float = 0, text : String = "", border : Dynamic = 0, ln : Float = 0, align : String = "", fill : Float = 0, link : ILink = null) : Void
+    public function addCell(width : Float = 0, height : Float = 0, text : String = "", border : Dynamic = 0, ln : Float = 0, align : String = "", fill : Float = 0, link : ILink = null,
+        column: GridColumn = null) : Void
     {
         if (currentY + height > pageBreakTrigger && !inHeader && !inFooter && acceptPageBreak()) 
         {
@@ -2980,8 +2982,8 @@ class PDF implements IEventDispatcher
             s = Sprintf.sprintf("%.2f %.2f %.2f %.2f re %s ",[ currentX * k, (currentPage.h - currentY) * k, width * k, -height * k, op]);
             endFill();
         }
-        
-        if (Std.is(border, String)) 
+
+        if (Std.is(border, String))
         {
             var borderBuffer : String = Std.string(border);
             var currentPageHeight : Float = currentPage.h;
@@ -2994,9 +2996,11 @@ class PDF implements IEventDispatcher
             if (borderBuffer.indexOf(Border.BOTTOM) != -1) 
                 s += Sprintf.sprintf("%.2f %.2f m %.2f %.2f l S ",[ currentX * k, (currentPageHeight - (currentY + height)) * k, (currentX + width) * k, (currentPageHeight - (currentY + height)) * k]);
         }
-        
-        if (text != "") 
-        {
+
+        if (null != column && null != column.cellRenderer) {
+            column.cellRenderer(text, currentX, currentY, width, height);
+        } else if (text != "") {
+
             var dx : Float;
             
             if (align == HorizontalAlign.RIGHT) 
@@ -3155,8 +3159,16 @@ class PDF implements IEventDispatcher
 		 * </pre>
 		 * </div>
 		 */
-    public function addMultiCell(width : Float, height : Float, text : String, border : Dynamic = 0, align : String = "J", filled : Int = 0) : Void
+    public function addMultiCell(width : Float, height : Float, text : String, border : String = null, align : String = "J", filled : Int = 0, column: GridColumn = null) : Void
     {
+        var oldFont: IFont = null;
+        var oldFontSize: Int = 0;
+        if (null != column && null != column.cellFont && column.cellFontSize > 0) {
+            oldFont = currentFont;
+            oldFontSize = fontSizePt;
+            setFont(column.cellFont, column.cellFontSize);
+        }
+
         charactersWidth = currentFont.charactersWidth;
         
         if (width == 0) 
@@ -3169,11 +3181,11 @@ class PDF implements IEventDispatcher
         if (nb > 0 && s.charAt(nb - 1) == "\n") 
             nb--;
         
-        var b : Dynamic = 0;
+        var b : String = null;
         
         if (border != null) 
         {
-            if (border == 1) 
+            if (border != null)
             {
                 border = "LTRB";
                 b = "LRT";
@@ -3214,7 +3226,7 @@ class PDF implements IEventDispatcher
                     write("0 Tw");
                 }
                 
-                addCell(width, height, s.substr(j, i - j), b, 2, align, filled);
+                addCell(width, height, s.substr(j, i - j), b, 2, align, filled, column);
                 
                 i++;
                 sep = -1;
@@ -3236,14 +3248,14 @@ class PDF implements IEventDispatcher
                 ns++;
             }
             
-            cwAux = Std.parseInt(Reflect.field(charactersWidth, c));
+            cwAux = charactersWidth.get(c);
             
             if (cwAux == 0) 
                 cwAux = FontMetrics.DEFAULT_WIDTH;
             
             l += cwAux;
             
-            if (l > wmax) 
+            if (l > wmax && (null == column || column.cellRenderer == null))
             {
                 if (sep == -1) 
                 {
@@ -3255,7 +3267,7 @@ class PDF implements IEventDispatcher
                         write("0 Tw");
                     }
                     
-                    addCell(width, height, s.substr(j, i - j), b, 2, align, filled);
+                    addCell(width, height, s.substr(j, i - j), b, 2, align, filled, column);
                 }
                 else 
                 {
@@ -3265,7 +3277,7 @@ class PDF implements IEventDispatcher
                         write(Sprintf.sprintf("%.3f Tw",[ ws * k]));
                     }
                     
-                    addCell(width, height, s.substr(j, sep - j), b, 2, align, filled);
+                    addCell(width, height, s.substr(j, sep - j), b, 2, align, filled, column);
                     
                     i = sep + 1;
                 }
@@ -3291,9 +3303,13 @@ class PDF implements IEventDispatcher
         if (border != null && border.indexOf("B") != -1) 
             b += "B";
         
-        addCell(width, height, s.substr(j, i - j), b, 2, align, filled);
+        addCell(width, height, s.substr(j, i - j), b, 2, align, filled, column);
         
         currentX = leftMargin;
+
+        if (null != column && null != column.cellFont && column.cellFontSize > 0) {
+            setFont(oldFont, oldFontSize);
+        }
     }
     
     /**
@@ -4173,17 +4189,18 @@ class PDF implements IEventDispatcher
         
         currentGrid.generateColumns(false);
         columns = currentGrid.columns;
-        
+
         var row : Array<Dynamic>;
-        columnNames = new Array<Dynamic>();
+        columnNames = new Array<GridCell>();
         var lngColumns : Int = columns.length;
         var item : Dynamic;
         
-        for (i in 0...lngColumns){columnNames.push(new GridCell(columns[i].headerText, currentGrid.headerColor));
+        for (i in 0...lngColumns){
+            columnNames.push(new GridCell(columns[i].headerText, currentGrid.headerColor));
         }
-        
+
         var rect : Rectangle = getRect(columnNames, currentGrid.headerHeight);
-        if (checkPageBreak(rect.height)) 
+        if (checkPageBreak(rect.height))
             addPage();
         
         setXY(x + getX(), y + getY());
@@ -4194,13 +4211,13 @@ class PDF implements IEventDispatcher
         
         var buffer : Array<Dynamic> = grid.cells;
         var lngRows : Int = buffer.length;
-        
+
         for (i in 0...lngRows){
             
             item = buffer[i];
             row = new Array<Dynamic>();
             for (j in 0...lngColumns){
-                row.push(item[columns[j].dataField] != (null) ? item[columns[j].dataField] : "");
+                row.push(!Reflect.hasField(item, columns[j].dataField) ? Reflect.field(item, columns[j].dataField) : "");
                 nb = Std.int(Math.min(nb, nbLines(columns[j].width, row[j])));
             }
             
@@ -4277,7 +4294,7 @@ class PDF implements IEventDispatcher
         
         for (i in 0...lng){
             cell = try cast(rows[i], GridCell) catch(e:Dynamic) null;
-            if ((nbL = nbLines(columns[i].width, cell.text)) > nb) 
+            if ((nbL = nbLines(columns[i].width, cell.text)) > nb && columns[i].cellRenderer == null)
                 nb = nbL;
         }
         
@@ -4298,17 +4315,18 @@ class PDF implements IEventDispatcher
         
         for (i in 0...lng){
             var cell : GridCell = try cast(data[i], GridCell) catch(e:Dynamic) null;
-            
+
             beginFill(cell.backgroundColor);
             
             a = ((style != GridRowType.HEADER)) ? columns[i].cellAlign : columns[i].headerAlign;
             rect.x = x = getX();
             rect.y = y = getY();
             rect.width = w = columns[i].width;
+
             lineStyle(currentGrid.borderColor, 0, 0, currentGrid.borderAlpha);
             drawRect(rect);
             setAlpha(1);
-            addMultiCell(w, currentGrid.rowHeight, cell.text, 0, a);
+            addMultiCell(w, currentGrid.rowHeight, cell.text, null, a, if (style != GridRowType.HEADER) columns[i] else null);
             setXY(x + w, y);
             
             endFill();
@@ -4323,7 +4341,7 @@ class PDF implements IEventDispatcher
     
     private function nbLines(width : Int, text : String) : Int
     {
-        var cw : Dynamic = currentFont.charactersWidth;
+        var cw : StringMap<Int> = currentFont.charactersWidth;
         
         if (width == 0) 
             width = Std.int(currentPage.w - rightMargin - leftMargin);
@@ -4360,7 +4378,7 @@ class PDF implements IEventDispatcher
             if (c == " ") 
                 sep = i;
             
-            cwAux = Std.parseInt(Reflect.field(cw, c));
+            cwAux = cw.get(c);
             
             if (cwAux == 0) 
                 cwAux = FontMetrics.DEFAULT_WIDTH;
@@ -5016,7 +5034,7 @@ class PDF implements IEventDispatcher
         
         viewerPreferences = "";
         outlines = new Array<Outline>();
-        arrayPages = new Array<Dynamic>();
+        arrayPages = new Array<Page>();
         arrayNotes = new Array<Dynamic>();
         graphicStates = new Array<Dynamic>();
         orientationChanges = new Array<Dynamic>();
@@ -5034,7 +5052,7 @@ class PDF implements IEventDispatcher
         colorFlag = false;
         matrix = new Matrix();
         
-        pagesReferences = new Array<Dynamic>();
+        pagesReferences = new Array<String>();
         compressedPages = new ByteArray();
         coreFontMetrics = new FontMetrics();
         
