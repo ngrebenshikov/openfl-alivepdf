@@ -111,7 +111,7 @@ addCellFitSpaceForce |  |
 addMultiCell |  |
 writeText |  |
 writeFlashHtmlText |  |
-addGrid |  |
+addGrid |  | ✓
 setGridPositionOnNextPages |  |
 save (LOCAL) | ✓ | ✓
 save (BASE64) | ✓ |
