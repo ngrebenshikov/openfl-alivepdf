@@ -103,12 +103,12 @@ totalFonts |  |
 getFonts |  |
 addText | ✓ | ✓
 textStyle |  |
-addCell |  |
+addCell |  | ✓
 addCellFitScale |  |
 addCellFitScaleForce |  |
 addCellFitSpace |  |
 addCellFitSpaceForce |  |
-addMultiCell |  |
+addMultiCell |  | ✓
 writeText |  |
 writeFlashHtmlText |  |
 addGrid |  | ✓
