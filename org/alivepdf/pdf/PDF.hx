@@ -4285,23 +4285,25 @@ class PDF implements IEventDispatcher
     }
     
     private function getRect(rows : Array<Dynamic>, rowHeight : Int = 5) : Rectangle
-    
     {
         var nb : Int = 0;
         var nbL : Int = 0;
-        var lng : Int = rows.length;
-        var cell : GridCell;
+        var maxH: Float = 0;
         
-        for (i in 0...lng){
-            cell = try cast(rows[i], GridCell) catch(e:Dynamic) null;
-            if ((nbL = nbLines(columns[i].width, cell.text)) > nb && columns[i].cellRenderer == null)
+        for (i in 0...rows.length) {
+            var cell = try cast(rows[i], GridCell) catch(e:Dynamic) null;
+            if (columns[i].cellRenderer == null && (nbL = nbLines(columns[i].width, cell.text)) > nb) {
                 nb = nbL;
+            }
+            if (null != columns[i].cellRectCalculator) {
+                var r = columns[i].cellRectCalculator(cell.text);
+                if (r.height > maxH) {
+                    maxH = r.height;
+                }
+            }
         }
         
-        var ph : Int = rowHeight;
-        var h : Float = ((ph * nb > rowHeight)) ? ph * nb : rowHeight;
-        
-        return new Rectangle(0, 0, 0, h);
+        return new Rectangle(0, 0, 0, Math.max(Math.max(rowHeight * nb, rowHeight), maxH));
     }
     
     private function addRow(data : Array<Dynamic>, style : String, rect : Rectangle) : Void
@@ -4334,7 +4336,7 @@ class PDF implements IEventDispatcher
         newLine(h);
     }
     
-    private function checkPageBreak(height : Float) : Bool
+    public function checkPageBreak(height : Float) : Bool
     {
         return getY() + height > pageBreakTrigger;
     }
@@ -4888,7 +4890,8 @@ class PDF implements IEventDispatcher
 		 */
     public function addImage(displayObject : DisplayObject, resizeMode : Resize = null, x : Float = 0, y : Float = 0, width : Float = 0, height : Float = 0, rotation : Float = 0, alpha : Float = 1, keepTransformation : Bool = true, imageFormat : String = "PNG", quality : Float = 100, blendMode : String = "Normal", link : ILink = null) : Void
     {
-        if (!streamDictionary.exists(Std.string(displayObject)))
+        var displayObjectId: String = Std.string(displayObject) + "-" + displayObject.name;
+        if (!streamDictionary.exists(displayObjectId))
         {
             var bytes : ByteArray;
             var bitmapDataBuffer : BitmapData;
@@ -4931,9 +4934,9 @@ class PDF implements IEventDispatcher
                 image = new DoTIFFImage(bitmapDataBuffer, bytes, id);
             }
             
-            streamDictionary.set(Std.string(displayObject), image);
+            streamDictionary.set(displayObjectId, image);
         }
-        else image = streamDictionary.get(Std.string(displayObject));
+        else image = streamDictionary.get(displayObjectId);
         
         setAlpha(alpha, blendMode);
         placeImage(x, y, width, height, rotation, resizeMode, link);
