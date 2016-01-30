@@ -55,19 +55,19 @@ class JPEGImage extends PDFImage
                 
                 if (equals(appID, 0, data, 0, 5)) 
                 {
-                    if (data.__get(7) == 1)
+                    if (data[7] == 1)
                     {
                         physicalWidthDpi = getShortBigEndian(data, 8);
                         physicalHeightDpi = getShortBigEndian(data, 10);
-                        if ((data.__get(12) & 0xFF) == 1)
+                        if ((data[12] & 0xFF) == 1)
                             colorSpace = ColorSpace.DEVICE_GRAY;
                     }
-                    else if (data.__get(7) == 2)
+                    else if (data[7] == 2)
                     {
                         x = getShortBigEndian(data, 8);
                         y = getShortBigEndian(data, 10);
                         
-                        if ((data.__get(12) & 0xFF) == 1)
+                        if ((data[12] & 0xFF) == 1)
                             colorSpace = ColorSpace.DEVICE_GRAY;
                         
                         physicalWidthDpi = as3hx.Compat.parseInt(x * 2.54);
@@ -83,13 +83,13 @@ class JPEGImage extends PDFImage
                     return;
                 
                 format = JPEGImage.FORMAT;
-                bitsPerComponent = ((colorSpace != ColorSpace.DEVICE_RGB)) ? 8 : Std.int((data.__get(0) & 0xFF) * (data.__get(5) & 0xFF) / 3);
+                bitsPerComponent = ((colorSpace != ColorSpace.DEVICE_RGB)) ? 8 : Std.int((data[0] & 0xFF) * (data[5] & 0xFF) / 3);
                 progressive = marker == 0xFFC2 || marker == 0xFFC6 || marker == 0xFFCA || marker == 0xFFCE;
                 
                 _width = getShortBigEndian(data, 3);
                 _height = getShortBigEndian(data, 1);
                 
-                if ((data.__get(5) & 0xFF) == 1)
+                if ((data[5] & 0xFF) == 1)
                     colorSpace = ColorSpace.DEVICE_GRAY;
             }
             else stream.position += size - 2;
@@ -105,13 +105,13 @@ class JPEGImage extends PDFImage
     private static function equals(a1 : ByteArray, offs1 : Int, a2 : ByteArray, offs2 : Int, num : Int) : Bool
     {
         while (num-- > 0)
-        if (a1.__get(offs1++) != a2.__get(offs2++))
+        if (a1[offs1++] != a2[offs2++])
             return false;
         return true;
     }
     
     private function getShortBigEndian(a : ByteArray, offs : Int) : Int
     {
-        return Std.int((a.__get(offs) & 0xFF) << 8 | (a.__get(offs + 1) & 0xFF));
+        return Std.int((a[offs] & 0xFF) << 8 | (a[offs] + 1) & 0xFF);
     }
 }

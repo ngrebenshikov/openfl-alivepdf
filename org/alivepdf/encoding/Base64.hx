@@ -96,24 +96,24 @@ class Base64
         var encodedString : String = "";
         var packetLength : Int = pByteArrayPacket.length;
         
-        encodedString += _b64Chars[pByteArrayPacket.__get(0) >> 2];
+        encodedString += _b64Chars[pByteArrayPacket[0] >> 2];
         
         if (packetLength == 1) {
             
-            encodedString += (_b64Chars[((pByteArrayPacket.__get(0) << 4) & 0x3F)]);
+            encodedString += (_b64Chars[((pByteArrayPacket[0] << 4) & 0x3F)]);
             encodedString += ("==");
         }
         else if (packetLength == 2) {
             
-            encodedString += (_b64Chars[(pByteArrayPacket.__get(0) << 4) & 0x3F | pByteArrayPacket.__get(1) >> 4]);
-            encodedString += (_b64Chars[(pByteArrayPacket.__get(1) << 2) & 0x3F]);
+            encodedString += (_b64Chars[(pByteArrayPacket[0] << 4) & 0x3F | pByteArrayPacket[1] >> 4]);
+            encodedString += (_b64Chars[(pByteArrayPacket[1] << 2) & 0x3F]);
             encodedString += ("=");
         }
         else 
         {
-            encodedString += (_b64Chars[(pByteArrayPacket.__get(0) << 4) & 0x3F | pByteArrayPacket.__get(1) >> 4]);
-            encodedString += (_b64Chars[(pByteArrayPacket.__get(1) << 2) & 0x3F | pByteArrayPacket.__get(2) >> 6]);
-            encodedString += (_b64Chars[pByteArrayPacket.__get(2) & 0x3F]);
+            encodedString += (_b64Chars[(pByteArrayPacket[0] << 4) & 0x3F | pByteArrayPacket[1] >> 4]);
+            encodedString += (_b64Chars[(pByteArrayPacket[1] << 2) & 0x3F | pByteArrayPacket[2] >> 6]);
+            encodedString += (_b64Chars[pByteArrayPacket[2] & 0x3F]);
         }
         return encodedString;
     }

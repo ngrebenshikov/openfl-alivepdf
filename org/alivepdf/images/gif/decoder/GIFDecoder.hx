@@ -430,7 +430,7 @@ class GIFDecoder
                             break;
                         bi = 0;
                     }
-                    datum += (block.__get(bi) & 0xff) << bits;
+                    datum += (block[bi] & 0xff) << bits;
                     bits += 8;
                     bi++;
                     count--;
@@ -605,9 +605,9 @@ class GIFDecoder
             var j : Int = 0;
             while (i < ncolors)
             {
-                var r : Int = (c.__get(j++)) & 0xff;
-                var g : Int = (c.__get(j++)) & 0xff;
-                var b : Int = (c.__get(j++)) & 0xff;
+                var r : Int = (c[j++]) & 0xff;
+                var g : Int = (c[j++]) & 0xff;
+                var b : Int = (c[j++]) & 0xff;
                 tab[i++] = (0xff000000 | (r << 16) | (g << 8) | b);
             }
         }
@@ -644,7 +644,7 @@ class GIFDecoder
                             readBlock();
                             var app : String = "";
                             for (i in 0...11){
-                                app += block.__get(i);
+                                app += block[i];
                             }
                             if (app == "NETSCAPE2.0") 
                             {
@@ -808,11 +808,11 @@ class GIFDecoder
         do
         {
             readBlock();
-            if (block.__get(0) == 1)
+            if (block[0] == 1)
             {
                 // loop count sub-block
-                var b1 : Int = block.__get(1) & 0xff;
-                var b2 : Int = block.__get(2) & 0xff;
+                var b1 : Int = block[1] & 0xff;
+                var b2 : Int = block[2] & 0xff;
                 loopCount = (b2 << 8) | b1;
             }
         }        while (((blockSize > 0) && !hasError()));

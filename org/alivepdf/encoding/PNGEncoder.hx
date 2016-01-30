@@ -55,7 +55,7 @@ using pako.ByteArrayHelper;
                 subImage = img.getPixels(rectangle);
                 //Here we overwrite the alpha value of the first pixel
                 //to be the filter 0 flag
-                subImage.__set(0, 0);
+                subImage[0] = 0;
                 IDAT.writeBytes(subImage);
                 //And we add a byte at the end to wrap the alpha values
                 IDAT.writeByte(0xff);

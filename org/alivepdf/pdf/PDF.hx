@@ -4485,11 +4485,7 @@ class PDF implements IEventDispatcher
                 output = buffer;
             
             case Method.BASE_64:
-                var bytes = Bytes.alloc(buffer.length);
-                for (i in 0...buffer.length) {
-                    bytes.set(i, buffer.__get(i));
-                }
-                output = haxe.crypto.Base64.encode(bytes);
+                output = haxe.crypto.Base64.encode(buffer);
 
             case Method.REMOTE:
                 // Since FP 13.0.0.214, octet-stream header can not be used, will cause security error.
