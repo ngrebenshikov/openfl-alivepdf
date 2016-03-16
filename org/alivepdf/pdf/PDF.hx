@@ -2203,9 +2203,9 @@ class PDF implements IEventDispatcher
     {
         var op : String = (outline) ? "S" : "n";
         write(Sprintf.sprintf("q %.2F %.2F %.2F %.2F re W %s",[
-                        currentX * k,
-                        (currentPage.h - y) * k,
-                        width * k, -currentPage.h * k,
+                        x * k,
+                        (currentPage.h - y - height) * k,
+                        width * k, height * k,
                         op]));
     }
     

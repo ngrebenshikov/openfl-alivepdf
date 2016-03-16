@@ -78,7 +78,7 @@ linearGradient |  |
 radialGradient |  |
 clip |  |
 clippingText |  |
-clippingRect |  |
+clippingRect |  | ✓
 clippingRoundedRect |  |
 clippingEllipse |  |
 clippingCircle |  |
