@@ -1,2 +1,5 @@
 example/example.iml
 example/example.ipr
+example.iws
+example/bin
+example/out
