@@ -3,5 +3,4 @@
     <haxedef name="alivepdf" />
     <assets path="org/alivepdf/fonts/map" include="*.map" type="binary" />
     <dependency path="dependencies/pako.min.js" if="html5"/>
-    <template path="templates"/>
 </extension>

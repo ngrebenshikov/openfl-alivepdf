@@ -1,6 +1,5 @@
 package ;
 
-import sys.io.File;
 import flash.display.Graphics;
 import flash.display.Shape;
 import org.alivepdf.images.ColorSpace;
@@ -61,12 +60,12 @@ class Main extends Sprite {
         var base64: String = pdf.save(Method.BASE_64);
         flash.Lib.getURL(new URLRequest("data:application/pdf;base64," + StringTools.urlEncode(base64)));
         #else
-        var output = File.write("/tmp/generated.pdf", true);
+        var output = sys.io.File.write("/tmp/generated.pdf", true);
         var ba: ByteArray = cast pdf.save(Method.LOCAL);
         output.write(ba.toBytes());
         output.close();
-        #end
         Sys.exit(0);
+        #end
     }
 
     private function getByteArrayFromResource(resourceName: String): ByteArray {

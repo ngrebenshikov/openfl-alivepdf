@@ -14,8 +14,8 @@ class ByteArrayHelper {
         #if js
             var compressed: UInt8Array =
                 switch (algorithm) {
-                    case CompressionAlgorithm.ZLIB: pako.Pako.gzip(cast ba.byteView);
-                    case CompressionAlgorithm.DEFLATE: pako.Pako.deflate(cast ba.byteView);
+                    case CompressionAlgorithm.ZLIB: pako.Pako.gzip(cast cast(ba, Bytes).getData());
+                    case CompressionAlgorithm.DEFLATE: pako.Pako.deflate(cast cast(ba, Bytes).getData());
                     case CompressionAlgorithm.LZMA: null;
                     case _: null;
                 };
