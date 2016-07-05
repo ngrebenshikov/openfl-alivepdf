@@ -337,7 +337,7 @@ class PDF implements IEventDispatcher
     private var desc : String;
     private var underlinePosition : Float;
     private var underlineThickness : Float;
-    private var charactersWidth : Dynamic;
+    private var charactersWidth : StringMap<Int>;
     private var d : Int = 0;
     private var nb : Int = 0;
     private var size1 : Float;
@@ -5186,7 +5186,7 @@ class PDF implements IEventDispatcher
         
         while (l-- > 0)
         {
-            cw = Std.parseInt(charactersWidth[content.charCodeAt(l)]);
+            cw = charactersWidth.get(content);
             
             if (cw == 0) 
                 cw = FontMetrics.DEFAULT_WIDTH;

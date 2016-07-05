@@ -26,7 +26,7 @@ import org.alivepdf.events.CharacterEvent;
     public var capHeight(get, never) : Int;
     public var ascender(get, never) : Int;
     public var fontName(get, never) : String;
-    public var widths(get, never) : Map<Dynamic, Dynamic>;
+    public var widths(get, never) : StringMap<Int>;
     public var stemV(get, never) : Int;
     public var differences(get, never) : String;
     public var type(get, never) : String;
@@ -154,7 +154,7 @@ import org.alivepdf.events.CharacterEvent;
             if (code == AFMParser.C) 
             {
                 var cc : Int = as3hx.Compat.parseInt(e[1]);
-                var w : Int = e[4];
+                var w : Int = Std.parseInt(e[4]);
                 var gn : String = e[7];
                 
                 if (gn.substr(-4) == AFMParser.AC) 
@@ -391,7 +391,7 @@ import org.alivepdf.events.CharacterEvent;
         return _fontName;
     }
     
-    private function get_widths() : Map<Dynamic, Dynamic>
+    private function get_widths() : StringMap<Int>
     {
         return _widths;
     }

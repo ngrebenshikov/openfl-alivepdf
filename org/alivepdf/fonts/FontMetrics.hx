@@ -1094,18 +1094,18 @@ private static var ZapfDingbats: StringMap<Int> = [" "=>278,"!"=>974,"\""=>961,"
         return element.alias == FontMetrics.lookupFontName;
     }
     
-    public static function add(fontName : String, metrics : Dynamic) : Void
+    public static function add(fontName : String, metrics : StringMap<Int>) : Void
     {
         FontMetrics.lookupFontName = fontName;
         var result : Array<Dynamic> = FontMetrics.lookupTables.filter(filter);
         if (result.length == 0) 
             FontMetrics.lookupTables.push({
                     alias : fontName,
-                    metrics : metrics,
+                    metrics : metrics
                 });
     }
     
-    public static function lookUp(fontName : String) : Dynamic
+    public static function lookUp(fontName : String) : StringMap<Int>
     {
         FontMetrics.lookupFontName = fontName;
         var result : Array<Dynamic> = FontMetrics.lookupTables.filter(filter);
