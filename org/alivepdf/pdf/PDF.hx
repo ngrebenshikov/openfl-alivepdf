@@ -5866,40 +5866,32 @@ class PDF implements IEventDispatcher
             currentPage.content += content + "\n"
         else 
         {
-            if (!isLinux)
+            if (content.indexOf("\xFE\xFF") > 0)
             {
-                if (content.indexOf("\xFE\xFF") > 0)
-                {
-                    var chunks : Array<Dynamic> = content.split("\xFE\xFF");
-                    var chunk : String;
-                    var len : Int = chunks.length;
+                var chunks : Array<Dynamic> = content.split("\xFE\xFF");
+                var chunk : String;
+                var len : Int = chunks.length;
 
-                    var i = 0;
-                    while (i < len){
-                        chunk = try cast(chunks[i], String) catch(e:Dynamic) null;
-                        //TODO: check
-                        //buffer.writeMultiByte(chunk, "windows-1252");
-                        buffer.writeUTFBytes(chunk);
-                        if (i == len - 1 && chunk != "") {
-                            i++; continue;
-                        };
-                        buffer.writeByte(0);
-                        i += 1;
-                    }
-                    buffer.writeByte(0x0A);
-                }
-                //TODO: check
-                //else buffer.writeMultiByte(content + "\n", "windows-1252");
-                else buffer.writeUTFBytes(content + "\n");
-            }
-            else
-            {
-                var contentTxt : String = Std.string(content);
-                var lng : Int = contentTxt.length;
-                for (i in 0...lng){buffer.writeByte(contentTxt.charCodeAt(i));
+                var i = 0;
+                while (i < len){
+                    chunk = try cast(chunks[i], String) catch(e:Dynamic) null;
+                    doWriteString(chunk);
+                    if (i == len - 1 && chunk != "") {
+                        i++; continue;
+                    };
+                    buffer.writeByte(0);
+                    i += 1;
                 }
                 buffer.writeByte(0x0A);
             }
+            else doWriteString(content + "\n");
+        }
+    }
+
+    private function doWriteString(content: String) {
+        var contentTxt : String = Std.string(content);
+        var lng : Int = contentTxt.length;
+        for (i in 0...lng){buffer.writeByte(contentTxt.charCodeAt(i));
         }
     }
     
