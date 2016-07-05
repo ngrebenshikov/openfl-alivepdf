@@ -4217,7 +4217,7 @@ class PDF implements IEventDispatcher
             item = buffer[i];
             row = new Array<Dynamic>();
             for (j in 0...lngColumns){
-                row.push(!Reflect.hasField(item, columns[j].dataField) ? Reflect.field(item, columns[j].dataField) : "");
+                row.push(Reflect.hasField(item, columns[j].dataField) ? Reflect.field(item, columns[j].dataField) : "");
                 nb = Std.int(Math.min(nb, nbLines(columns[j].width, row[j])));
             }
             
@@ -5302,7 +5302,7 @@ class PDF implements IEventDispatcher
     
     private function findAndReplace(search : String, replace : String, source : String) : String
     {
-        return source.split(search).join(replace);
+        return Std.string(source).split(Std.string(search)).join(Std.string(replace));
     }
     
     private function createPageTree() : Void
