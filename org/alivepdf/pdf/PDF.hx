@@ -4818,7 +4818,8 @@ class PDF implements IEventDispatcher
 		 */
     public function addImageStream(imageBytes : ByteArray, colorSpace : String, resizeMode : Resize = null, x : Float = 0, y : Float = 0, width : Float = 0, height : Float = 0, rotation : Float = 0, alpha : Float = 1, blendMode : String = "Normal", link : ILink = null) : Void
     {
-        if (!streamDictionary.exists(Std.string(imageBytes)))
+        var idn = haxe.crypto.Md5.make(cast(imageBytes, Bytes)).toString();
+        if (!streamDictionary.exists(idn))
         {
             imageBytes.position = 0;
             
@@ -4842,10 +4843,10 @@ class PDF implements IEventDispatcher
             }
             else throw new Error("Image format not supported for now.");
             
-           streamDictionary.set(Std.string(imageBytes), image);
+           streamDictionary.set(idn, image);
         }
-        else image = streamDictionary.get(Std.string(imageBytes));
-        
+        else image = streamDictionary.get(idn);
+
         setAlpha(alpha, blendMode);
         placeImage(x, y, width, height, rotation, resizeMode, link);
     }
