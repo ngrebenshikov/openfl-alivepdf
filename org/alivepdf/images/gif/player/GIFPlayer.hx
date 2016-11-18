@@ -74,7 +74,8 @@ class GIFPlayer extends Bitmap
     
     private function onComplete(pEvt : Event) : Void
     {
-        readStream(pEvt.target.data);
+        var d: Dynamic = pEvt.target;
+        readStream(d.data);
     }
     
     private function readStream(pBytes : ByteArray) : BitmapData
@@ -110,7 +111,8 @@ class GIFPlayer extends Bitmap
     {
         var delay : Int = aFrames[iIndex = iInc++ % arrayLng].delay;
         
-        pEvt.target.delay = ((delay > 0)) ? delay : 100;
+        var t: Dynamic = pEvt.target;
+        t.delay = ((delay > 0)) ? delay : 100;
         
         var _sw0_ = (gifDecoder.disposeValue);        
 
