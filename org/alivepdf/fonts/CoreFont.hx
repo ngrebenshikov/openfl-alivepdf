@@ -15,7 +15,7 @@ import flash.events.EventDispatcher;
 	 */
 class CoreFont implements IFont
 {
-    public var charactersWidth(get, never) : Dynamic;
+    public var charactersWidth(get, never) : StringMap<Int>;
     public var name(get, set) : String;
     public var numGlyphs(get, never) : Int;
     public var type(get, never) : String;
