@@ -5187,7 +5187,7 @@ class PDF implements IEventDispatcher
         
         while (l-- > 0)
         {
-            cw = charactersWidth.get(content);
+            cw = charactersWidth.get(content.charAt(l));
             
             if (cw == 0) 
                 cw = FontMetrics.DEFAULT_WIDTH;
