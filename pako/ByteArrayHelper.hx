@@ -20,8 +20,16 @@ class ByteArrayHelper {
                     case _: null;
                 };
             return if (null != compressed) ByteArray.fromBytes(compressed.view.buffer) else null;
+
+        #elseif cpp
+            switch(algorithm) {
+                case CompressionAlgorithm.ZLIB: ba.compress(algorithm);
+                case CompressionAlgorithm.DEFLATE: ba = ByteArray.fromBytes(local.zip.Compress.run(cast(ba, Bytes), 8));
+                case CompressionAlgorithm.LZMA: ba.compress(algorithm);
+            }
+            return ba;
         #else
-            ba.compress(algorithm);
+            ba.compress(algorithm)
             return ba;
         #end
     }
