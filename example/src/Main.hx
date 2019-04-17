@@ -62,7 +62,7 @@ class Main extends Sprite {
         #else
         var output = sys.io.File.write("/tmp/generated.pdf", true);
         var ba: ByteArray = cast pdf.save(Method.LOCAL);
-        output.write(ba.toBytes());
+        output.write(cast(ba, Bytes));
         output.close();
         Sys.exit(0);
         #end

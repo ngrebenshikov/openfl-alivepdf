@@ -5832,7 +5832,7 @@ class PDF implements IEventDispatcher
         return content.split(search).length;
     }
     
-    private function getCount(object : Dynamic) : Int
+    private function getCount<A>(object: Iterable<A>) : Int
     {
         return Lambda.count(object);
     }
