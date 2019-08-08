@@ -5867,9 +5867,9 @@ class PDF implements IEventDispatcher
             currentPage.content += content + "\n"
         else 
         {
-            if (content.indexOf("\xFE\xFF") > 0)
+            if (content.indexOf("\u00FE\u00FF") > 0)
             {
-                var chunks : Array<Dynamic> = content.split("\xFE\xFF");
+                var chunks : Array<Dynamic> = content.split("\u00FE\u00FF");
                 var chunk : String;
                 var len : Int = chunks.length;
 

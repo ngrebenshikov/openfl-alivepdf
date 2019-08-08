@@ -1,4 +1,7 @@
 package ;
+
+using XmlAccessExtension;
+
 class FastXMLList {
     var l : Array<FastXML>;
 
@@ -16,11 +19,11 @@ class FastXMLList {
     public function descendants(name:String = "*") :FastXMLList {
         var a = new Array<FastXML>();
         for(fx in l) {
-            for(e in fx.x.elements()) {
-                if(e.nodeName == name || name == "*") {
-                    a.push(new FastXML(e));
+            for(e in { iterator: function() { return fx.elements; }}) {
+                if(e.name == name || name == "*") {
+                    a.push(new FastXML(e.x));
                 } else {
-                    var fx2 = new FastXML(e);
+                    var fx2 = new FastXML(e.x);
                     a = a.concat(fx2.descendants(name).getArray());
                 }
             }
