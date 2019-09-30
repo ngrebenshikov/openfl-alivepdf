@@ -29,7 +29,7 @@ class ByteArrayHelper {
             }
             return ba;
         #else
-            ba.compress(algorithm)
+            ba.compress(algorithm);
             return ba;
         #end
     }
