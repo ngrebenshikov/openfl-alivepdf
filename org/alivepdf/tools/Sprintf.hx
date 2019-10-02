@@ -219,7 +219,7 @@ class Sprintf
                         result += str;
                     case "f", "F":
                         next = args.shift();
-                        str = formatFloat(Math.abs(Std.parseFloat(next)), precision != ("") ? Std.parseInt(precision) : 6);
+                        str = formatFloat(Math.abs(as3hx.Compat.parseFloat(next)), precision != ("") ? Std.parseInt(precision) : 6);
                         
                         if (next < 0)
                             str = "-" + str

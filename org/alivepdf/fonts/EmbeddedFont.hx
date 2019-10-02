@@ -13,6 +13,8 @@ import org.alivepdf.events.CharacterEvent;
 import org.alivepdf.fonts.FontMetrics;
 import org.alivepdf.fonts.FontType;
 
+import haxe.ds.StringMap;
+
 
 using pako.ByteArrayHelper;
 /**
@@ -24,7 +26,7 @@ using pako.ByteArrayHelper;
 class EmbeddedFont extends CoreFont implements IFont
 {
     public var encoding(get, never) : ByteArray;
-    public var widths(get, never) : Dynamic;
+    public var widths(get, never) : StringMap<Int>;
     public var weight(get, never) : String;
     public var originalSize(get, never) : Int;
     public var description(get, never) : FontDescription;
@@ -38,7 +40,7 @@ class EmbeddedFont extends CoreFont implements IFont
     private var _originalSize : Int = 0;
     private var _version : String;
     private var _weight : String;
-    private var _widths : Dynamic;
+    private var _widths : StringMap<Int>;
     private var _afmParser : AFMParser;
     private var _encoding : ByteArray;
     

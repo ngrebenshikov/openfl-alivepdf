@@ -1,9 +1,11 @@
 package pako;
 
+import openfl.utils.Endian;
+import openfl.utils.CompressionAlgorithm;
+import openfl.utils.ByteArray;
 import haxe.io.Bytes;
 import haxe.io.UInt8Array;
-import flash.utils.CompressionAlgorithm;
-import flash.utils.ByteArray;
+
 
 class ByteArrayHelper {
     public static function compressEx(ba: ByteArray, ?algorithm : CompressionAlgorithm): ByteArray {
@@ -30,7 +32,13 @@ class ByteArrayHelper {
             return ba;
         #else
             ba.compress(algorithm);
-            return ba;
+            var res = new ByteArray(ba.length + 6);
+            res.endian = Endian.BIG_ENDIAN;
+            res.writeByte(0x78);
+            res.writeByte(0xda);
+            res.writeBytes(ba);
+            res.writeInt(haxe.crypto.Adler32.make(ba));
+            return res;
         #end
     }
 }

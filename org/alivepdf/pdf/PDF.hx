@@ -287,13 +287,13 @@ class PDF implements IEventDispatcher
     private var textWordSpace : Float;
     private var k : Float;
     private var leftMargin : Float;
-    private var leftMarginPt : Float;
+    private var leftMarginPt : Null<Float>;
     private var topMargin : Float;
-    private var topMarginPt : Float;
+    private var topMarginPt : Null<Float>;
     private var rightMargin : Float;
-    private var rightMarginPt : Float;
+    private var rightMarginPt : Null<Float>;
     private var bottomMargin : Float;
-    private var bottomMarginPt : Float;
+    private var bottomMarginPt : Null<Float>;
     private var currentMargin : Float;
     private var currentX : Float;
     private var currentY : Float;
@@ -372,7 +372,7 @@ class PDF implements IEventDispatcher
     private var js : String;
     private var widths : Dynamic;
     private var aligns : Array<Dynamic> = new Array<Dynamic>();
-    private var spotColors : Array<Dynamic> = new Array<Dynamic>();
+    private var spotColors : Array<SpotColor> = new Array<SpotColor>();
     private var drawColor : String;
     private var bitmapFilled : Bool;
     private var bitmapFillBuffer : Shape = new Shape();
@@ -382,7 +382,7 @@ class PDF implements IEventDispatcher
     private var startingPageIndex : Int = 0;
     private var nextPageY : Float = 10;
     private var nextPageX : Float = 10;
-    private var gradients : Array<Dynamic> = new Array<Dynamic>();
+    private var gradients : Array<ShadingType> = new Array<ShadingType>();
     private var isWrapRow : Bool;
     private var row : Array<Dynamic>;
     private var column : Array<Dynamic>;
@@ -1328,7 +1328,6 @@ class PDF implements IEventDispatcher
                     SA : true,
                     CA : alpha,
                     BM : "/" + blendMode,
-
                 });
         setExtGState(graphicState);
     }
@@ -1551,8 +1550,9 @@ class PDF implements IEventDispatcher
         }
         else if (Std.is(color, SpotColor)) 
         {
-            if (Lambda.indexOf(spotColors, color) == -1) 
-                spotColors.push(color);
+            var sc: SpotColor = cast color;
+            if (Lambda.indexOf(spotColors, sc) == -1)
+                spotColors.push(cast(color, SpotColor));
             write(Sprintf.sprintf("/CS%d CS %.3F SCN",[ (try cast(color, SpotColor) catch(e:Dynamic) null).i, tint * .01]));
         }
         else 
@@ -1590,8 +1590,9 @@ class PDF implements IEventDispatcher
         }
         else if (Std.is(color, SpotColor)) 
         {
-            if (Lambda.indexOf(spotColors, color) == -1) 
-                spotColors.push(color);
+            var sc: SpotColor = cast color;
+            if (Lambda.indexOf(spotColors, sc) == -1)
+                spotColors.push(sc);
             addTextColor = Sprintf.sprintf("/CS%d cs %.3F scn", [(try cast(color, SpotColor) catch(e:Dynamic) null).i, tint * .01]);
             colorFlag = (fillColor != textColor);
         }
@@ -1643,8 +1644,9 @@ class PDF implements IEventDispatcher
         }
         else if (Std.is(color, SpotColor)) 
         {
-            if (Lambda.indexOf(spotColors, color) == -1) 
-                spotColors.push(color);
+            var sc: SpotColor = cast color;
+            if (Lambda.indexOf(spotColors, sc) == -1)
+                spotColors.push(cast(color, SpotColor));
             write(Sprintf.sprintf("/CS%d cs %.3F scn",[ (try cast(color, SpotColor) catch(e:Dynamic) null).i, tint * .01]));
             colorFlag = (fillColor != textColor);
         }
@@ -5157,10 +5159,10 @@ class PDF implements IEventDispatcher
         else throw new RangeError("Incorrect unit: " + unit);
         
         // We recompute the size for the current unit of all unit dependent stuff
-        leftMargin = leftMarginPt / k;
-        topMargin = topMarginPt / k;
-        bottomMargin = bottomMarginPt / k;
-        rightMargin = rightMarginPt / k;
+        leftMargin = if (null != leftMarginPt) leftMarginPt / k else 0.0;
+        topMargin = if (null != topMarginPt) topMarginPt / k else 0.0;
+        bottomMargin = if (null != bottomMarginPt) bottomMarginPt / k else 0.0;
+        rightMargin = if (null != rightMarginPt) rightMarginPt / k else 0.0;
         
         return unit;
     }
@@ -5245,7 +5247,7 @@ class PDF implements IEventDispatcher
             graphicStates[i].n = n;
             write("<</Type /ExtGState");
             for (k in Reflect.fields(graphicStates[i]))
-            write("/" + k + " " + Reflect.field(graphicStates[i], k));
+                write("/" + k + " " + Reflect.field(graphicStates[i], k));
             write(">>");
             write("endobj");
         }
@@ -5370,17 +5372,24 @@ class PDF implements IEventDispatcher
         writeXObjectDictionary();
         write(">>");
         write("/ExtGState <<");
-        for (k in Reflect.fields(graphicStates))
-        write("/GS" + k + " " + Reflect.field(graphicStates, k).n + " 0 R");
+        var gsIndex = 0;
+        for (gs in graphicStates) {
+            write("/GS" + Std.string(gsIndex) + " " + gs.n + " 0 R");
+            gsIndex += 1;
+        }
         write(">>");
         write("/ColorSpace <<");
-        for (color in spotColors)
-        write("/CS" + color.i + " " + color.n + " 0 R");
+        for (color in spotColors) {
+            write("/CS" + color.i + " " + color.n + " 0 R");
+        }
         write(">>");
         write("/Properties <</OC1 " + nOCGPrint + " 0 R /OC2 " + nOCGView + " 0 R>>");
         write("/Shading <<");
-        for (i in Reflect.fields(gradients))
-        write("/Sh" + i + " " + Reflect.field(gradients, i).id + " 0 R");
+        var gradientIndex = 0;
+        for (gradient in gradients) {
+            write("/Sh" + gradientIndex + " " + gradient.id + " 0 R");
+            gradientIndex += 1;
+        }
         write(">>");
     }
     
@@ -5526,7 +5535,9 @@ class PDF implements IEventDispatcher
                 write("endobj");
                 newObj();
                 s = "[ ";
-                for (i in 32...0x100){s += embeddedFont.widths.get(String.fromCharCode(i)) + " ";
+                for (i in 32...0x100){
+                    var c = String.fromCharCode(i);
+                    s += (if (embeddedFont.widths.exists(c)) embeddedFont.widths.get(c) else 0) + " ";
                 }
                 write(s + "]");
                 write("endobj");

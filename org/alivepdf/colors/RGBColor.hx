@@ -10,11 +10,12 @@ package org.alivepdf.colors;
     public var g : Int = 0;
     public var b : Int = 0;
     
-    public function new(color : Int)
-    {
-        r = (color >> 16) & 0xFF;
-        g = (color >> 8) & 0xFF;
-        b = color & 0xFF;
+    public function new(color : Null<Int>) {
+        if (null != color) {
+            r = (color >> 16) & 0xFF;
+            g = (color >> 8) & 0xFF;
+            b = color & 0xFF;
+        }
     }
     
     public static function hexStringToRGBColor(hex : String) : RGBColor
