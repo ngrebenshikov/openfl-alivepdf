@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": ["pdf"],
 	"description": "The PDF generation library ported from the AlivePDF AS3 project",
-	"version": "0.1",
+	"version": "0.1.0",
 	"releasenote": "Initial release",
 	"contributors": [ "ngrebenshikov" ]
 }
